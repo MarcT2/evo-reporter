@@ -6376,7 +6376,6 @@ package scripts.jobQueue.script
     			var goldTime:Number = -resource.gold / (resource.taxIncome - resource.herosSalary) * 3600;
     			obj.col4 = Utils.formatTime(goldTime);
     			obj.label += "\n\nRun out of gold in " + obj.col4;
-    			if (goldTime < 24*3600) obj.bgColor = 0xFFCCCC;
     		} else {
     			obj.col4 = "";
     		}
@@ -6392,7 +6391,6 @@ package scripts.jobQueue.script
     			var foodTime:Number = -resource.food.amount / (resource.food.increaseRate - resource.troopCostFood) * 3600;
     			obj.col4 = Utils.formatTime(foodTime);
     			obj.label += "\n\nRun out of food in " + obj.col4;
-    			if (foodTime < 24*3600) obj.bgColor = 0xFFCCCC;
     		} else {
     			obj.col4 = "";
     		}
@@ -6445,6 +6443,7 @@ package scripts.jobQueue.script
     			} else {
     				obj.col3 = "Att " + hero.power;
     			}
+				obj.col4 = hero.experience > hero.upgradeExp
     			obj.label = hero.name + " " + hero.management + "/" + hero.power + "/" + hero.stratagem +
     				"\nlevel " + hero.level + "\nloyalty " + hero.loyalty + "\nexperience " + hero.experience + "/" + hero.upgradeExp ;
     			if (hero.itemId != null && hero.status == HeroConstants.HERO_SEIZED_STATU) {
@@ -6727,13 +6726,14 @@ package scripts.jobQueue.script
 				obj.col2 = formatNum(troop[ troopIntNames[type] ]);
 				obj.col3 = formatNum(total[ troopIntNames[type] ]);
 				obj.col4 = formatNum(prod[ troopIntNames[type] ]);	
+				obj.col5 = formatNum(friendly[ troopIntNames[type] ]);
 				if (troopRequirement != null) {
-					obj.col5 = formatNum(troopRequirement[ troopIntNames[type] ]);
-					if (total[ troopIntNames[type] ] + prod[ troopIntNames[type] ] < troopRequirement[ troopIntNames[type] ]) obj.bgColor = 0xCCCCFF;
+					obj.col6 = troopRequirement[ troopIntNames[type] ] - (total[ troopIntNames[type] ] + prod[ troopIntNames[type] ]);
+					obj.col7 = formatNum(troopRequirement[ troopIntNames[type] ]);
 				} else {
-					obj.col5 = "";
+					obj.col6 = "";
+					obj.col7 = "";
 				}
-				obj.col6 = formatNum(friendly[ troopIntNames[type] ]);
 				data.addItem(obj);
 			}   	
    		}    
