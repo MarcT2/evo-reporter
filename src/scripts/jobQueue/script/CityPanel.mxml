@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" xmlns:local="scripts.jobQueue.script.*" width="100%" height="100%" borderStyle="solid">
+<mx:Canvas xmlns:mx="http://www.adobe.com/2006/mxml" width="100%" height="100%" borderStyle="solid">
 	<mx:Style source="css/styles.css" />
 	<mx:Script>
 		<![CDATA[
@@ -288,17 +288,17 @@
 					</mx:DataGrid>
 				</mx:Canvas>
 				<mx:Canvas label="R" width="100%" height="100%" id="resource" color="white">
-					<local:RowColorDataGrid dataProvider="{resourceData}" width="100%" height="100%" allowMultipleSelection="false"
+					<mx:DataGrid dataProvider="{resourceData}" width="100%" height="100%" allowMultipleSelection="false"
 						doubleClickEnabled="false" dragEnabled="false" editable="false" resizableColumns="true" wordWrap="false" 
 						showHeaders="true" sortableColumns="false" visible="true" allowDragSelection="false" draggableColumns="false" enabled="true" 
 						selectable="false" horizontalScrollPolicy="off" variableRowHeight="true" minHeight="30" rowHeight="16" color="black">
-						<local:columns>
+						<mx:columns>
 							<mx:DataGridColumn headerText="Resource" dataField="col1" width="0.25" showDataTips="true"/>
 							<mx:DataGridColumn headerText="Amount" dataField="col2" width="0.25" showDataTips="true"/>
 							<mx:DataGridColumn headerText="Rate" dataField="col3" width="0.25" showDataTips="true"/>
 							<mx:DataGridColumn headerText="Days left" dataField="col4" width="0.35" showDataTips="true"/>
-						</local:columns>
-					</local:RowColorDataGrid>
+						</mx:columns>
+					</mx:DataGrid>
 				</mx:Canvas>
 				<mx:Canvas label="V" width="100%" height="100%" id="valley" color="white">
 					<mx:DataGrid dataProvider="{valleyData}" width="100%" height="100%" allowMultipleSelection="false"
@@ -312,22 +312,22 @@
 							<mx:DataGridColumn headerText="Distance" dataField="col4" width="0.2"/>
 							<mx:DataGridColumn headerText="Action" width="0.2">
 								<mx:itemRenderer>
-								<mx:Component>
-								<mx:VBox verticalGap="0" horizontalAlign="center">
-								<mx:Script>
-								<![CDATA[
-									private var lastTime:Number = 0;
-									private function abandonField(fieldId:int) : void {
-										if (new Date().getTime() < lastTime + 3000) return;
-										lastTime = new Date().getTime(); 
-										var cp:CityPanel = this.outerDocument as CityPanel;
-										if (cp != null) cp.abandonField(fieldId);
-									}
-								]]>
-								</mx:Script>
-								<mx:Button fontSize="10" id="abandonButton" label="Abandon" click="abandonField(data.col5)"/>
-								</mx:VBox>
-								</mx:Component>
+									<mx:Component>
+										<mx:VBox verticalGap="0" horizontalAlign="center">
+											<mx:Script>
+											<![CDATA[
+												private var lastTime:Number = 0;
+												private function abandonField(fieldId:int) : void {
+													if (new Date().getTime() < lastTime + 3000) return;
+													lastTime = new Date().getTime(); 
+													var cp:CityPanel = this.outerDocument as CityPanel;
+													if (cp != null) cp.abandonField(fieldId);
+												}
+											]]>
+											</mx:Script>
+										<mx:Button fontSize="10" id="abandonButton" label="Abandon" click="abandonField(data.col5)"/>
+										</mx:VBox>
+									</mx:Component>
 								</mx:itemRenderer>
 							</mx:DataGridColumn>
 						</mx:columns>
@@ -339,27 +339,94 @@
 						showHeaders="true" sortableColumns="false" visible="true" allowDragSelection="false" draggableColumns="false" enabled="true" 
 						selectable="false" horizontalScrollPolicy="off" variableRowHeight="true" minHeight="30" rowHeight="16" color="black">
 						<mx:columns>
-							<mx:DataGridColumn headerText="Hero" dataField="col1" width="0.2"/>
-							<mx:DataGridColumn headerText="Status" dataField="col2" width="0.2"/>
-							<mx:DataGridColumn headerText="Type" dataField="col3" width="0.3" showDataTips="true"/>
+							<mx:DataGridColumn headerText="Hero" dataField="col1" width="0.2">
+								<mx:itemRenderer>
+									<mx:Component>
+										<mx:VBox verticalGap="0">
+											<mx:Script>
+											<![CDATA[
+												override public function set data( value:Object ) : void {
+													super.data = value;
+													if(data.col4 == false )
+														setStyle("backgroundColor",0xDDFFDD);
+													else
+														setStyle("backgroundColor",0xFFDDDD);
+													}
+											]]>
+											</mx:Script>
+											<mx:Label toolTip="{data.label}" text="{data.col1}" />
+										</mx:VBox>
+  									</mx:Component>
+								</mx:itemRenderer>
+							</mx:DataGridColumn>
+							<mx:DataGridColumn headerText="Status" dataField="col2" width="0.40" showDataTips="true">
+								<mx:itemRenderer>
+									<mx:Component>
+										<mx:VBox verticalGap="0">
+											<mx:Script>
+												<![CDATA[
+													override public function set data( value:Object ) : void {
+														super.data = value;
+														if(data.col2 == 'Idle' )
+															setStyle("backgroundColor",0xFFFFFF);
+														else if (data.col2 == 'Mayor' )
+															setStyle("backgroundColor",0xFFEFDD);
+														else if (data.col2 == 'Defend' )
+															setStyle("backgroundColor",0xFFEAAB);
+														else if (data.col2 == 'March' )
+															setStyle("backgroundColor",0xF9BDBD);
+														else if (data.col2 == 'Captive' )
+															setStyle("backgroundColor",0xFDFFCF);
+														else if (data.col2 == 'Return' )
+															setStyle("backgroundColor",0xCFCFFF);
+														else
+															setStyle("backgroundColor",0xFFFFFF);
+														}
+												]]>
+											</mx:Script>
+										<mx:Label toolTip="{data.label}" text="{data.col2}"/>
+										</mx:VBox>
+									</mx:Component>
+								</mx:itemRenderer>
+							</mx:DataGridColumn>
+							<mx:DataGridColumn headerText="Type" dataField="col3" width="0.2">
+								<mx:itemRenderer>
+									<mx:Component>
+										<mx:VBox verticalGap="0">
+											<mx:Script>
+											<![CDATA[
+												override public function set data( value:Object ) : void {
+													super.data = value;
+													if(data.col4 == false )
+														setStyle("backgroundColor",0xDDFFDD);
+													else
+														setStyle("backgroundColor",0xFFDDDD);
+													}
+											]]>
+											</mx:Script>
+											<mx:Label toolTip="{data.label}" text="{data.col3}" />
+										</mx:VBox>
+									</mx:Component>
+								</mx:itemRenderer>
+							</mx:DataGridColumn>
 							<mx:DataGridColumn headerText="Action" width="0.2">
 								<mx:itemRenderer>
-								<mx:Component>
-								<mx:VBox verticalGap="0" horizontalAlign="center">
-								<mx:Script>
-								<![CDATA[
-									private var lastTime:Number = 0;
-									private function recallHero(heroId:int) : void {
-										if (new Date().getTime() < lastTime + 3000) return;
-										lastTime = new Date().getTime(); 
-										var cp:CityPanel = this.outerDocument as CityPanel;
-										if (cp != null) cp.recallHero(heroId);
-									}
-								]]>
-								</mx:Script>
-								<mx:Button fontSize="10" id="recall" label="Recall" visible="{data.col4!=-1}" click="recallHero(data.col4)"/>
-								</mx:VBox>
-								</mx:Component>
+									<mx:Component>
+										<mx:VBox verticalGap="0" horizontalAlign="center">
+											<mx:Script>
+											<![CDATA[
+												private var lastTime:Number = 0;
+												private function recallHero(heroId:int) : void {
+													if (new Date().getTime() < lastTime + 3000) return;
+													lastTime = new Date().getTime(); 
+													var cp:CityPanel = this.outerDocument as CityPanel;
+													if (cp != null) cp.recallHero(heroId);
+												}
+											]]>
+											</mx:Script>
+										<mx:Button fontSize="10" id="recall" label="Recall" visible="{data.col4!=-1}" click="recallHero(data.col4)"/>
+										</mx:VBox>
+									</mx:Component>
 								</mx:itemRenderer>
 							</mx:DataGridColumn>
 						</mx:columns>
@@ -393,46 +460,264 @@
 						showHeaders="true" sortableColumns="false" visible="true" allowDragSelection="false" draggableColumns="false" enabled="true" 
 						selectable="false" horizontalScrollPolicy="off" variableRowHeight="true" minHeight="30" rowHeight="16" color="black">
 						<mx:columns>
-							<mx:DataGridColumn headerText="Army" dataField="col1" width="0.15"/>
-							<mx:DataGridColumn headerText="Target" dataField="col2" width="0.40" showDataTips="true"/>
-							<mx:DataGridColumn headerText="Remain time" dataField="col3" width="0.15"/>
+							<mx:DataGridColumn headerText="Status" dataField="col1" width="0.30" showDataTips="true">
+								<mx:itemRenderer>
+									<mx:Component>
+										<mx:VBox verticalGap="0">
+										<mx:Script>
+										<![CDATA[
+											override public function set data( value:Object ) : void {
+												super.data = value;
+												if (data.col1 == 'transport' )
+													setStyle("backgroundColor",0xF9BDBD);
+												else if (data.col1 == 'reinforce' )
+													setStyle("backgroundColor",0xF9BDBD);
+												else if (data.col1 == 'attack' )
+													setStyle("backgroundColor",0xF9BDBD);
+												else if (data.col1 == 'scout' )
+													setStyle("backgroundColor",0xF9BDBD);
+												else if (data.col1 == 'reinforce at' )
+													setStyle("backgroundColor",0xFFEAAB);
+												else if (data.col1 == 'attack at' )
+													setStyle("backgroundColor",0xFFEAAB);
+												else if (data.col1 == 'Captive' )
+													setStyle("backgroundColor",0xFDFFCF);
+												else if (data.col1 == 'transport return' )
+													setStyle("backgroundColor",0xCFCFFF);
+												else if (data.col1 == 'scout return' )
+													setStyle("backgroundColor",0xCFCFFF);
+												else if (data.col1 == 'reinforce return' )
+													setStyle("backgroundColor",0xCFCFFF);
+												else if (data.col1 == 'attack return' )
+													setStyle("backgroundColor",0xCFCFFF);
+												else
+													setStyle("backgroundColor",0xFFFFFF);
+												}
+										]]>
+										</mx:Script>
+										<mx:Label  toolTip="{data.label}" text="{data.col1}"/>
+										</mx:VBox>
+									</mx:Component>
+								</mx:itemRenderer>
+							</mx:DataGridColumn>
+							<mx:DataGridColumn headerText="Target" dataField="col2" width="0.50" showDataTips="true">
+								<mx:itemRenderer>
+									<mx:Component>
+										<mx:VBox verticalGap="0">
+										<mx:Script>
+										<![CDATA[
+											override public function set data( value:Object ) : void {
+												super.data = value;
+												if (data.col1 == 'transport' )
+													setStyle("backgroundColor",0xF9BDBD);
+												else if (data.col1 == 'reinforce' )
+													setStyle("backgroundColor",0xF9BDBD);
+												else if (data.col1 == 'attack' )
+													setStyle("backgroundColor",0xF9BDBD);
+												else if (data.col1 == 'attack at' )
+													setStyle("backgroundColor",0xFFEAAB);
+												else if (data.col1 == 'scout' )
+													setStyle("backgroundColor",0xF9BDBD);
+												else if (data.col1 == 'reinforce at' )
+													setStyle("backgroundColor",0xFFEAAB);
+												else if (data.col1 == 'Captive' )
+													setStyle("backgroundColor",0xFDFFCF);
+												else if (data.col1 == 'transport return' )
+													setStyle("backgroundColor",0xCFCFFF);
+												else if (data.col1 == 'scout return' )
+													setStyle("backgroundColor",0xCFCFFF);
+												else if (data.col1 == 'reinforce return' )
+													setStyle("backgroundColor",0xCFCFFF);
+												else if (data.col1 == 'attack return' )
+													setStyle("backgroundColor",0xCFCFFF);
+												else
+													setStyle("backgroundColor",0xFFFFFF);
+												}
+										]]>
+										</mx:Script>
+										<mx:Label toolTip="{data.label}" text="{data.col2}"/>
+										</mx:VBox>
+									</mx:Component>
+								</mx:itemRenderer>
+							</mx:DataGridColumn>
+							<mx:DataGridColumn headerText="Remain Time" dataField="col3" width="0.15" showDataTips="true">
+								<mx:itemRenderer>
+									<mx:Component>
+										<mx:VBox verticalGap="0">
+										<mx:Script>
+										<![CDATA[
+											override public function set data( value:Object ) : void {
+												super.data = value;
+												if (data.col1 == 'transport' )
+													setStyle("backgroundColor",0xF9BDBD);
+												else if (data.col1 == 'reinforce' )
+													setStyle("backgroundColor",0xF9BDBD);
+												else if (data.col1 == 'attack' )
+													setStyle("backgroundColor",0xF9BDBD);
+												else if (data.col1 == 'scout' )
+													setStyle("backgroundColor",0xF9BDBD);
+												else if (data.col1 == 'reinforce at' )
+													setStyle("backgroundColor",0xFFEAAB);
+												else if (data.col1 == 'attack at' )
+													setStyle("backgroundColor",0xFFEAAB);
+												else if (data.col1 == 'Captive' )
+													setStyle("backgroundColor",0xFDFFCF);
+												else if (data.col1 == 'transport return' )
+													setStyle("backgroundColor",0xCFCFFF);
+												else if (data.col1 == 'scout return' )
+													setStyle("backgroundColor",0xCFCFFF);
+												else if (data.col1 == 'reinforce return' )
+													setStyle("backgroundColor",0xCFCFFF);
+												else if (data.col1 == 'attack return' )
+													setStyle("backgroundColor",0xCFCFFF);
+												else
+													setStyle("backgroundColor",0xFFFFFF);
+												}
+										]]>
+										</mx:Script>
+										<mx:Label toolTip="{data.label}" text="{data.col3}"/>
+										</mx:VBox>
+									</mx:Component>
+								</mx:itemRenderer>
+							</mx:DataGridColumn>
 							<mx:DataGridColumn headerText="Action" width="0.15">
 								<mx:itemRenderer>
-								<mx:Component>
-								<mx:VBox verticalGap="0" horizontalAlign="center">
-								<mx:Script>
-								<![CDATA[
-									private var lastTime:Number = 0;
-									private function recallSelfArmy(armyId:int) : void {
-										if (new Date().getTime() < lastTime + 3000) return;
-										lastTime = new Date().getTime(); 
-										var cp:CityPanel = this.outerDocument as CityPanel;
-										if (cp != null) cp.recallSelfArmy(armyId);
-									}
-								]]>
-								</mx:Script>
-								<mx:Button fontSize="10" id="recall" label="Recall" visible="{data.col4!=-1}" click="recallSelfArmy(data.col4)"/>
-								</mx:VBox>
-								</mx:Component>
+									<mx:Component>
+										<mx:VBox verticalGap="0" horizontalAlign="center">
+											<mx:Script>
+											<![CDATA[
+												private var lastTime:Number = 0;
+												private function recallSelfArmy(armyId:int) : void {
+													if (new Date().getTime() < lastTime + 3000) return;
+													lastTime = new Date().getTime(); 
+													var cp:CityPanel = this.outerDocument as CityPanel;
+													if (cp != null) cp.recallSelfArmy(armyId);
+												}
+											]]>
+											</mx:Script>
+										<mx:Button fontSize="10" id="recall" label="Recall" visible="{data.col4!=-1}" click="recallSelfArmy(data.col4)"/>
+										</mx:VBox>
+									</mx:Component>
 								</mx:itemRenderer>
 							</mx:DataGridColumn>
 						</mx:columns>
 					</mx:DataGrid>	
 				</mx:Canvas>
 				<mx:Canvas label="T" width="100%" height="100%" id="troops" color="white">
-					<local:RowColorDataGrid dataProvider="{troopsData}" width="100%" height="100%" allowMultipleSelection="false"
+					<mx:DataGrid dataProvider="{troopsData}" width="100%" height="100%" allowMultipleSelection="false"
 						doubleClickEnabled="false" dragEnabled="false" editable="false" resizableColumns="true" wordWrap="false" 
 						showHeaders="true" sortableColumns="false" visible="true" allowDragSelection="false" draggableColumns="false" enabled="true" 
 						selectable="false" horizontalScrollPolicy="off" variableRowHeight="true" minHeight="30" rowHeight="16" color="black">
-						<local:columns>
+						<mx:columns>
 							<mx:DataGridColumn headerText="Troop" dataField="col1" width="0.20"/>
 							<mx:DataGridColumn headerText="Available" dataField="col2" width="0.15"/>
-							<mx:DataGridColumn headerText="Total" dataField="col3" width="0.15"/>
-							<mx:DataGridColumn headerText="In Queues" dataField="col4" width="0.15"/>
-							<mx:DataGridColumn headerText="Goal" dataField="col5" width="0.15"/>
-							<mx:DataGridColumn headerText="Reinforce" dataField="col6" width="0.15"/>
-						</local:columns>
-					</local:RowColorDataGrid>	
+							<mx:DataGridColumn headerText="Total" dataField="col3" width="0.15" >
+								<mx:itemRenderer>
+									<mx:Component>
+										<mx:VBox verticalGap="0">
+											<mx:Script>
+											<![CDATA[
+												override public function set data( value:Object ) : void {
+													super.data = value;
+													if ( data.col6 > 0 ) {
+														setStyle("backgroundColor",0xFFDDDD);
+													} else {
+														setStyle("backgroundColor",0xDDFFDD);
+													}
+													if (data.col7 == "0") {
+														setStyle("backgroundColor",0xDDFFDD);
+													}
+												}
+											]]>
+											</mx:Script>
+											<mx:Label text="{data.col3}" />
+										</mx:VBox>
+									</mx:Component>
+								</mx:itemRenderer>
+							</mx:DataGridColumn>
+							<mx:DataGridColumn headerText="In Queues" dataField="col4" width="0.15" >
+								<mx:itemRenderer>
+									<mx:Component>
+										<mx:VBox verticalGap="0">
+											<mx:Script>
+											<![CDATA[
+												override public function set data( value:Object ) : void {
+													super.data = value;
+													if ( data.col6 > 0 ) {
+														setStyle("backgroundColor",0xFFDDDD);
+													} else {
+														setStyle("backgroundColor",0xDDFFDD);
+													}
+													if (data.col7 == "0") {
+														setStyle("backgroundColor",0xDDFFDD);
+													}
+												}
+											]]>
+											</mx:Script>
+											<mx:Label text="{data.col4}" />
+										</mx:VBox>
+									</mx:Component>
+								</mx:itemRenderer>
+							</mx:DataGridColumn>
+							<mx:DataGridColumn headerText="Goal" dataField="col6" width="0.12" >
+								<mx:itemRenderer>
+									<mx:Component>
+										<mx:VBox verticalGap="0">
+											<mx:Script>
+											<![CDATA[
+												override public function set data( value:Object ) : void {
+													super.data = value;
+													if ( data.col6 > 0 ) {
+														setStyle("backgroundColor",0xFFDDDD);
+													} else {
+														setStyle("backgroundColor",0xDDFFDD);
+													}
+													if (data.col7 == "0") {
+														setStyle("backgroundColor",0xDDFFDD);
+													}
+												}
+											]]>
+											</mx:Script>
+											<mx:Label text="{data.col7}" />
+										</mx:VBox>
+									</mx:Component>
+								</mx:itemRenderer>
+							</mx:DataGridColumn>
+							<mx:DataGridColumn headerText="Remain" dataField="col6" width="0.12" >
+								<mx:itemRenderer>
+									<mx:Component>
+										<mx:VBox verticalGap="0">
+											<mx:Script>
+											<![CDATA[
+												override public function set data( value:Object ) : void {
+													super.data = value;
+													if ( data.col6 > 0 ) {
+														setStyle("backgroundColor",0xFFDDDD);
+													} else {
+														setStyle("backgroundColor",0xDDFFDD);
+													}
+													if (data.col7 == "0") {
+														setStyle("backgroundColor",0xDDFFDD);
+													}
+												}
+												public function formatNum(num:Number) : String {
+													if (num < 0) return "0";
+													if (num < 1000) return "" + num;
+													if (num < 10000) return "" + int(num/100) / 10 + "k";
+													if (num < 1000000) return "" + int(num/1000) + "k";
+													if (num < 10000000) return "" + int(num/100000) / 10 + "m";
+													return "" + int(num/1000000) + "m";
+												}
+											]]>
+											</mx:Script>
+											<mx:Label text="{formatNum(data.col6)}" />
+										</mx:VBox>
+									</mx:Component>
+								</mx:itemRenderer>
+							</mx:DataGridColumn>
+							<mx:DataGridColumn headerText="Reinforce" dataField="col5" width="0.12"/>
+						</mx:columns>
+					</mx:DataGrid>
 				</mx:Canvas>
 				<mx:Canvas label="F" width="100%" height="100%" id="fortifications" color="white">
 					<mx:DataGrid dataProvider="{fortificationsData}" width="100%" height="100%" allowMultipleSelection="false"
@@ -460,36 +745,36 @@
 					</mx:DataGrid>	
 				</mx:Canvas>
 				<mx:Canvas label="E" width="100%" height="100%" id="extra" color="white">
-					<local:RowColorDataGrid dataProvider="{extraTroopData}" width="100%" height="100%" allowMultipleSelection="false"
+					<mx:DataGrid dataProvider="{extraTroopData}" width="100%" height="100%" allowMultipleSelection="false"
 						doubleClickEnabled="false" dragEnabled="false" editable="false" resizableColumns="true" wordWrap="false" 
 						showHeaders="true" sortableColumns="false" visible="true" allowDragSelection="false" draggableColumns="false" enabled="true" 
 						selectable="false" horizontalScrollPolicy="off" variableRowHeight="true" minHeight="30" rowHeight="16" color="black">
-						<local:columns>
+						<mx:columns>
 							<mx:DataGridColumn headerText="Extra troops" dataField="col1" width="0.20"/>
 							<mx:DataGridColumn headerText="From" dataField="col2" width="0.40" showDataTips="true"/>
 							<mx:DataGridColumn headerText="Remain time" dataField="col3" width="0.20"/>
 							<mx:DataGridColumn headerText="Action" width="0.2">
 								<mx:itemRenderer>
-								<mx:Component>
-								<mx:VBox verticalGap="0" horizontalAlign="center">
-								<mx:Script>
-								<![CDATA[
-									private var lastTime:Number = 0;
-									private function recallFriendlyArmy(armyId:int) : void {
-										if (new Date().getTime() < lastTime + 3000) return;
-										lastTime = new Date().getTime(); 
-										var cp:CityPanel = this.outerDocument as CityPanel;
-										if (cp != null) cp.recallFriendlyArmy(armyId);
-									}
-								]]>
-								</mx:Script>
-								<mx:Button fontSize="10" id="recall" label="Recall" visible="{data.col4!=-1}" click="recallFriendlyArmy(data.col4)"/>
-								</mx:VBox>
-								</mx:Component>
+									<mx:Component>
+										<mx:VBox verticalGap="0" horizontalAlign="center">
+											<mx:Script>
+											<![CDATA[
+												private var lastTime:Number = 0;
+												private function recallFriendlyArmy(armyId:int) : void {
+													if (new Date().getTime() < lastTime + 3000) return;
+													lastTime = new Date().getTime(); 
+													var cp:CityPanel = this.outerDocument as CityPanel;
+													if (cp != null) cp.recallFriendlyArmy(armyId);
+												}
+											]]>
+											</mx:Script>
+										<mx:Button fontSize="10" id="recall" label="Recall" visible="{data.col4!=-1}" click="recallFriendlyArmy(data.col4)"/>
+										</mx:VBox>
+									</mx:Component>
 								</mx:itemRenderer>
 							</mx:DataGridColumn>
-						</local:columns>
-					</local:RowColorDataGrid>	
+						</mx:columns>
+					</mx:DataGrid>	
 				</mx:Canvas>
 				<mx:Canvas label="5" width="100%" height="100%" id="npc5" color="white">
 					<mx:DataGrid dataProvider="{npc5data}" width="100%" height="100%" allowMultipleSelection="false"
