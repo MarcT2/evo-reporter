@@ -1,0 +1,15 @@
+
+.gradientRectangleSkin {
+	
+    fontFamily: Arial;
+    fontSize: 12;
+    color: #000000;
+    textAlign:left;
+    width:150;
+    height:30;
+    
+    upSkin:ClassReference('programmaticSkinClasses.GradientRectangleSkin');
+	downSkin:ClassReference('programmaticSkinClasses.GradientRectangleSkin');
+	overSkin:ClassReference('programmaticSkinClasses.GradientRectangleSkin');
+	disabledSkin:ClassReference('programmaticSkinClasses.GradientRectangleSkin');
+}
