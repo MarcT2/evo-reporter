@@ -62,7 +62,7 @@ package scripts.jobQueue.script
 		{
 			logMessage("Estimated finish time: " + d.toLocaleString());
 		}
-
+		
 		public function logError(message:String) : void
 		{
 			dispatchEvent(new ScriptLogEvent("<font color='#ff0000'>(" + m_city.castle.name + ") - " + message, ScriptLogEvent.ERROR + "</font>"));
