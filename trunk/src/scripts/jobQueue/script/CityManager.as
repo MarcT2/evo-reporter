@@ -25,7 +25,6 @@ package scripts.jobQueue.script
 	import flash.utils.*;
 	
 	import mx.collections.ArrayCollection;
-	import mx.utils.ObjectProxy;
 
 	public class CityManager extends EventDispatcher
 	{
@@ -1966,13 +1965,13 @@ package scripts.jobQueue.script
 				while (experience >= 100*level*level) {
 					experience -= 100*level*level;
 					level++;
-					logMessage("uplevel hero: " + heroToString(hero) , "#7A1595");
+					logMessage("uplevel hero: " + heroToString(hero) , "#000066");
 					ActionFactory.getInstance().getHeroCommand().levelUp(castle.id, hero.id);
 					any = true;
 				}
 				if (!isLoyal(hero) && estResource.gold >= hero.level * 100) {
 					if (cityTimingAllowed("reward" + hero.id, 900)) {
-						logMessage("reward hero: " + heroToString(hero) + "#7A1595");
+						logMessage("reward hero: " + heroToString(hero) + "#000066");
 						ActionFactory.getInstance().getHeroCommand().awardGold(castle.id, hero.id);
 						estResource.gold -= hero.level*100;
 						any = true;
@@ -3125,7 +3124,7 @@ package scripts.jobQueue.script
 							promoteAttackChief();
 						}
 
-						if (getConfig(CONFIG_DEBUG) > 0) logMessage("Produce " + 1 + " " + troopExtNames[type] + " on reserved barrack at " + reservedBarrack.positionId);
+						if (getConfig(CONFIG_DEBUG) > 0) logMessage("Produce " + 1 + " " + troopExtNames[type] + " on reserved barrack at " + reservedBarrack.positionId, "#169736");
 						ActionFactory.getInstance().getTroopCommands().produceTroop(castle.id, reservedBarrack.positionId, type, 1, false, false);			
 						for each(resName in resourceIntNames) estResource[resName] -= troopCond[resName] * 1;
 						estResource.curPopulation -= troopPopulations[type];
@@ -3432,7 +3431,7 @@ package scripts.jobQueue.script
 			var batch:int = 100;
 			for each (var type:int in types) {
 				if (canProduceFortification(type, batch) && spaceAvailableForFortification(batch) && fortification[ troopIntNames[type] ] + prod[ troopIntNames[type] ] < fortificationsRequirement[ troopIntNames[type] ]) {
-					if (getConfig(CONFIG_DEBUG) > 0) logMessage("Use spare resources for " + batch + " " + troopExtNames[type] , "#169736");
+					if (getConfig(CONFIG_DEBUG) > 0) logMessage("Use spare resources for " + batch + " " + troopExtNames[type], "#169736");
 					ActionFactory.getInstance().getFortificationsCommands().produceWallProtect(castle.id, type, batch);					
 					return true;
 				}
@@ -3719,7 +3718,7 @@ package scripts.jobQueue.script
 		
 			candidateLocalFields.sort(compareByLocalFieldPriority);
 			candidateFlatFields.sort(compareByLocalFieldPriority);
-			if (getConfig(CONFIG_DEBUG) > 0) logMessage("*** Found " + candidateFlatFields.length + " FLATS's ***");
+			if (getConfig(CONFIG_DEBUG) > 0) logMessage("*** Found " + candidateFlatFields.length + " FLATS's ***", "#7A1595");
 		}
 
 		private var lastSearchResourceLevel:int = -1;
@@ -3940,9 +3939,9 @@ package scripts.jobQueue.script
 			}
 			
 			var tr:TroopBean = new TroopBean();
-			var archers:Array = new Array(0, 50, 100, 200,  400,  800, 1600,  3200,  6400, 12800, 19990);
-			var warriors:Array = new Array(0, 0, 0,     0, 1250, 2500, 5000, 10000, 20000, 40000, 60000);
-			var reqRally:Array = new Array(0, 1, 1,     1,    1,    1,    1,     2,     3,     6,     8);
+			var archers:Array =  new Array(0, 50, 100, 200,  400,  800, 1600,  3200,  6400, 12800, 19990);
+			var warriors:Array = new Array(0,  0,   0,   0, 1250, 2500, 5000, 10000, 20000, 40000, 60000);
+			var reqRally:Array = new Array(0,  1,   1,   1,    1,    1,    1,     2,     3,     6,     8);
 
 			var layers:Array = new Array(0, 0, 0, 0,  1, 1, 1, 1, 1, 1, 1);
 			var types:Array = new Array(TFConstants.T_SWORDSMEN, TFConstants.T_PIKEMAN, TFConstants.T_SCOUTER);			
@@ -6445,6 +6444,7 @@ package scripts.jobQueue.script
     			} else {
     				obj.col3 = "Att " + hero.power;
     			}
+
     			obj.label = hero.name + " " + hero.management + "/" + hero.power + "/" + hero.stratagem +
     				"\nlevel " + hero.level + "\nloyalty " + hero.loyalty + "\nexperience " + hero.experience + "/" + hero.upgradeExp ;
     			if (hero.itemId != null && hero.status == HeroConstants.HERO_SEIZED_STATU) {
