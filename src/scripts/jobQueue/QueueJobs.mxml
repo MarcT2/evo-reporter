@@ -53,6 +53,7 @@
 			import com.umge.sovt.common.server.events.EnemyArmysUpdate;
 			import com.umge.sovt.common.server.events.LoginResponse;
 			import mx.events.ItemClickEvent;
+			import mx.events.IndexChangedEvent;
 
 			public var currentPlayer:PlayerBean;
 	        
@@ -105,20 +106,20 @@
 				chatText.addEventListener(KeyboardEvent.KEY_UP, keySendChat);
 				
 				allianceChatLabel.addEventListener(MouseEvent.CLICK , label_Activate);
-				allianceChatLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
-				allianceChatLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);
+//				allianceChatLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
+//				allianceChatLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);
 				
 				privateChatLabel.addEventListener(MouseEvent.CLICK , label_Activate);
-				privateChatLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
-				privateChatLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);
+//				privateChatLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
+//				privateChatLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);
 
 				worldChatLabel.addEventListener(MouseEvent.CLICK , label_Activate);
-				worldChatLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
-				worldChatLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);
+//				worldChatLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
+//				worldChatLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);
 
 				commandLabel.addEventListener(MouseEvent.CLICK , label_Activate);
-				commandLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
-				commandLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);
+//				commandLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
+//				commandLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);								
 				
 				clrButton.setStyle('fontSize','10');
 				clrButton.setStyle('fontWeight','normal');
@@ -214,8 +215,10 @@
 	   
 				if (chatStack.selectedIndex != 0)
 				{
-					allianceChatLabel.setStyle('fontSize','12');
-					allianceChatLabel.setStyle("fontWeight", "bold");					
+						for each (var t1:Object in chatTab.getChildren())
+						{
+			        		if (t1.label == "Alliance Chat") t1.setStyle("fontWeight", "bold");;			        			
+			        	}		
 				}   
 				
 				
@@ -255,8 +258,10 @@
 	        	
 	        	if (chatStack.selectedIndex != 1)
 	        	{
-	        		privateChatLabel.setStyle('fontSize','12');
-					privateChatLabel.setStyle("fontWeight", "bold");
+	        		for each (var t1:Object in chatTab.getChildren())
+					{
+			        	if (t1.label == "Private Chat") t1.setStyle("fontWeight", "bold");;			        			
+			        }	
 	        	}
 	        	
 	        }
@@ -521,50 +526,64 @@
         		}
 	        }
 			
-			private function activateLabel(label:Button) : void {
-				allianceChatLabel.setStyle('fontSize','10');
-				allianceChatLabel.setStyle('fontWeight','normal');
-				allianceChatLabel.setStyle("themeColor", 0x3333FF );
-				allianceChatLabel.setStyle("color", "#3333FF");
-				privateChatLabel.setStyle('fontSize','10');
-				privateChatLabel.setStyle('fontWeight','normal');				
-				privateChatLabel.setStyle("themeColor", 0x6A44AF );
-				privateChatLabel.setStyle("color", "#6A44AF");					
-				worldChatLabel.setStyle('fontSize','10');
-				worldChatLabel.setStyle('fontWeight','normal');
-				worldChatLabel.setStyle("themeColor", 0x000000 );
-				worldChatLabel.setStyle("color", "#000000");									
-				commandLabel.setStyle('fontSize','10');
-				commandLabel.setStyle('fontWeight','normal');
-				commandLabel.setStyle("themeColor", 0x006600 );
-				commandLabel.setStyle("color", "#006600");									
-				
-				if ( label.id == "allianceChatLabel" ) {
-					label.setStyle("themeColor", 0x3333FF );
-					label.setStyle("color", "#3333FF");					
-				} else if ( label.id == "privateChatLabel" ) {
-					label.setStyle("themeColor", 0x6A44AF );
-					label.setStyle("color", "#6A44AF" );
-				} else if ( label.id == "commandLabel" ) {
-					label.setStyle("themeColor", 0x006600 );
-					label.setStyle("color", "#006600" );
-				} else {
-					label.setStyle("themeColor", 0x000000 );
-					label.setStyle("color", "#000000");					
+			private function activateLabel(label:Canvas) : void {
+
+				for each (var t1:Object in chatTab.getChildren())
+				{
+	       			if (t1.label == "Alliance Chat") {
+						t1.setStyle('fontSize','10');
+						t1.setStyle('fontWeight','normal');
+						t1.setStyle("themeColor", 0x3333FF );
+						t1.setStyle("color", "#3333FF");
+	       			} else if (t1.label == "Private Chat") {
+						t1.setStyle('fontSize','10');
+						t1.setStyle('fontWeight','normal');				
+						t1.setStyle("themeColor", 0x6A44AF );
+						t1.setStyle("color", "#6A44AF");	
+	       			} else if (t1.label == "Commands") {
+						t1.setStyle('fontSize','10');
+						t1.setStyle('fontWeight','normal');
+						t1.setStyle("themeColor", 0x006600 );
+						t1.setStyle("color", "#006600");
+	    	   		} else {
+						t1.setStyle('fontSize','10');
+						t1.setStyle('fontWeight','normal');
+						t1.setStyle("themeColor", 0x000000 );
+						t1.setStyle("color", "#000000");	
+		       		}
+					t1.setStyle("fillColors", ["#FFFFFF", "#FFFFFF"]);
+					t1.setStyle("fillAlphas", [1.0, 1.0]);
+					t1.setStyle("backgroundColor", "#FFFFFF");
 				}
-				label.setStyle('fontSize','10');
-				label.setStyle('fontWeight','normal');
-			}
-				        
-			private function label_Activate(e:Event) : void
-			{
+ 			}
+
+ 			private function label_Activate(e:Event) : void
+ 			{
 				e.currentTarget.setStyle('fontSize','10');
-				e.currentTarget.setStyle("fontWeight", "normal");
-				if (e.currentTarget is Label) {
-					activateLabel(e.currentTarget as Button);
-				}
-			}
-	        
+ 				e.currentTarget.setStyle("fontWeight", "normal");
+ 				if (e.currentTarget is Label) {
+					activateLabel(e.currentTarget as Canvas);
+ 				}
+ 			}
+ 			
+ 			private function onTabSelect(): void
+ 			{
+ 				var selectedTab:String
+ 				if (chatStack.selectedIndex == 0) {
+ 					selectedTab = "Alliance Chat"
+ 				} else if (chatStack.selectedIndex == 1) {
+ 					selectedTab = "Private Chat"
+ 				} else if (chatStack.selectedIndex == 3) {
+ 					selectedTab = "Commands"
+ 				} else {
+ 					return;
+ 				}
+				for each (var t1:Object in chatTab.getChildren())
+				{
+					if (t1.label == selectedTab) t1.setStyle("fontWeight", "normal");		        			
+				}		
+ 			}
+			
 	        private function label_rollOut(e:Event) : void
 	        {
 	        	e.currentTarget.setStyle("textDecoration", "normal");
@@ -659,8 +678,10 @@
 	        private function logCommandMessage(str:String) : void {
 		        appendToTextArea(commandText, " " + str, "#096E6D");
 	        	if (chatStack.selectedIndex != 3) {
-	        		commandLabel.setStyle('fontSize','12');
-	        		commandLabel.setStyle("fontWeight", "bold");
+	        		for each (var t1:Object in chatTab.getChildren())
+					{
+			        	if (t1.label == "Commands") t1.setStyle("fontWeight", "bold");;			        			
+			        }	
 	        	}
 	        }
 
@@ -1077,6 +1098,20 @@
 				return -1;
 			}
 
+			private function tabBar_creationComplete():void {
+				
+				for each (var t1:Object in logTab.getChildren())
+				{
+	       			t1.setStyle('fontSize','10');
+					t1.setStyle('fontWeight','normal');
+					t1.setStyle("themeColor", 0x000000 );
+					t1.setStyle("color", "#000000");	
+					t1.setStyle("fillColors", ["#FFFFFF", "#FFFFFF"]);
+					t1.setStyle("fillAlphas", [1.0, 1.0]);
+					t1.setStyle("backgroundColor", "#FFFFFF");
+				}
+			}
+
 
 		]]>
 	</mx:Script>
@@ -1088,21 +1123,21 @@
 
 	<mx:VBox width="100%" height="100%" verticalGap="0" borderStyle="none">
 	<mx:HBox width="100%" height="30">
-		<mx:TabBar id="citiesTab" direction="horizontal"  fontSize="10"/>
+		<mx:TabBar id="citiesTab" direction="horizontal" fontSize="10"/>
 		<mx:HBox width="0" height="100%"></mx:HBox>
 		<mx:Button id="pauseButton" label="Pause" enabled="true" click="pauseQueue()" fontSize="10" styleName="gradientRectangleSkin"/>
 		<mx:Button id="refreshButton" label="Refresh" enabled="true" click="refresh()" fontSize="10" styleName="gradientRectangleSkin"/>
 	</mx:HBox>
 	
-	<mx:VDividedBox width="100%" height="100%">
+	<mx:VDividedBox width="100%" height="100%" verticalGap="5">
 	<mx:ViewStack id="citiesViewStack" width="100%" height="50%" ></mx:ViewStack>
-		<mx:HDividedBox width="100%" id="logChatBox" horizontalGap="3" height="50%" borderStyle="solid" borderThickness="0" verticalAlign="bottom">
+		<mx:HDividedBox width="100%" id="logChatBox" horizontalGap="5" height="50%" borderStyle="solid" borderThickness="0" verticalAlign="bottom">
 			<mx:VBox width="50%" height="100%" verticalGap="0" borderStyle="none" id="vlogs">
-				<mx:HBox width="100%" height="30" verticalAlign="bottom">
-				<mx:TabBar dataProvider="logStack"/>
-				<mx:HBox width="90%" height="100%"></mx:HBox>
-				<mx:Button label="Clear" height="20" click="clearLogs()" id="clrButton" styleName="gradientRectangleSkin"/>
-			</mx:HBox>
+				<mx:HBox width="100%" height="20" verticalAlign="bottom">
+					<mx:TabBar id="logTab" dataProvider="logStack" creationComplete="tabBar_creationComplete()" height="20"/>
+					<mx:HBox width="90%" height="100%"/>
+					<mx:Button label="Clear" height="20" click="clearLogs()" id="clrButton" styleName="gradientRectangleSkin"/>
+				</mx:HBox>
 				<mx:ViewStack id="logStack" width="100%" height="100%" creationPolicy="all">
 					<mx:Canvas id="allLogLabel" width="100%" height="100%" label="Log">
 						<mx:TextArea width="100%" id="logs" height="100%" wordWrap="true" editable="false" enabled="true"/>
@@ -1113,26 +1148,22 @@
 				</mx:ViewStack>
 			</mx:VBox>
 			<mx:VBox width="50%" height="100%" verticalGap="0" borderStyle="none" id="vchatbox">
-				<mx:VDividedBox height="100%" width="100%" verticalGap="2">
-					<mx:VBox height="100%" width="100%">
-						<mx:HBox width="100%" height="20">
-							<mx:Label text="Chat: " height="20" fontSize="11"/>
-							<mx:Button label="Alliance Chat"  height="20" click="chatStack.selectedChild=aChatCanv;" id="allianceChatLabel" styleName="gradientRectangleSkin"/>
-							<mx:Button label="Private Chat" height="20" click="chatStack.selectedChild=pChatCanv;" id="privateChatLabel" styleName="gradientRectangleSkin"/>
-							<mx:Button label="World Chat" height="20" click="chatStack.selectedChild=wChatCanv;" id="worldChatLabel" styleName="gradientRectangleSkin"/>
-							<mx:Button label="Commands" height="20" click="chatStack.selectedChild=commandCanv;" id="commandLabel" styleName="gradientRectangleSkin"/>
+				<mx:VDividedBox height="100%" width="100%" verticalGap="0">
+					<mx:VBox height="100%" width="100%" verticalGap="0" borderThickness="0">
+						<mx:HBox width="100%" height="20" verticalAlign="bottom">
+							<mx:TabBar id="chatTab" dataProvider="chatStack" height="20" itemClick="onTabSelect()"/>
 						</mx:HBox>
 						<mx:ViewStack id="chatStack" width="100%" height="100%" creationPolicy="all">
-							<mx:Canvas id="aChatCanv" width="100%" height="100%" label="Alliance Chat">
+							<mx:Canvas id="allianceChatLabel" width="100%" height="100%" label="Alliance Chat">
 								<mx:TextArea id="aChatText" fontFamily="_sans" fontSize="11" width="100%" height="100%" wordWrap="true" editable="false" enabled="true" right="0" bottom="0"/>
 							</mx:Canvas>
-							<mx:Canvas id="pChatCanv" width="100%" height="100%" label="Private Chat">
+							<mx:Canvas id="privateChatLabel" width="100%" height="100%" label="Private Chat">
 								<mx:TextArea id="pChatText" fontFamily="_sans" fontSize="11" width="100%" height="100%" wordWrap="true" editable="false" enabled="true" right="0" bottom="0"/>
 							</mx:Canvas>
-							<mx:Canvas id="wChatCanv" width="100%" height="100%" label="World Chat">
+							<mx:Canvas id="worldChatLabel" width="100%" height="100%" label="World Chat">
 								<mx:TextArea id="wChatText" fontFamily="_sans" fontSize="11" width="100%" height="100%" wordWrap="true" editable="false" enabled="true" right="0" bottom="0"/>
 							</mx:Canvas>
-							<mx:Canvas id="commandCanv" width="100%" height="100%" label="Commands">
+							<mx:Canvas id="commandLabel" width="100%" height="100%" label="Commands">
 								<mx:TextArea id="commandText" fontFamily="_sans" fontSize="11" width="100%" height="100%" wordWrap="true" editable="false" enabled="true" right="0" bottom="0"/>
 							</mx:Canvas>
 						</mx:ViewStack>
