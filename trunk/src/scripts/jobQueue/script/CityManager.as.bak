@@ -1964,7 +1964,7 @@ package scripts.jobQueue.script
 			var hero:HeroBean;
 			
 			var avoidReward:HeroBean = worstAttackBaseHero();
-			if (avoidReward != null && avoidReward.power - avoidReward.level > getConfig(CONFIG_FASTHERO)) avoidReward = null;
+			if (avoidReward.power - avoidReward.level > getConfig(CONFIG_FASTHERO)) avoidReward = null;
 			
 			for each(hero in heroes) {
 				if (hero.status != CityStateConstants.HERO_STATUS_IDLE && hero.status != CityStateConstants.HERO_STATUS_MAYOR) continue;
@@ -3018,10 +3018,8 @@ package scripts.jobQueue.script
 		private function updateTroopRequirements() : void {
 			if (troopRequirements.length == 0) return;
 			if (troopProduceQueue == null) return;
-			if (troopListArray == null) return;
-			
 			var totalTroop:TroopBean = getAvailableTroop();
-
+			
 			// add troop from production queue to totalTroop
 			for each(var allProduceBean:AllProduceBean in troopProduceQueue) {
 				for each(var produceBean:ProduceBean in allProduceBean.allProduceQueueArray) {
@@ -3036,7 +3034,6 @@ package scripts.jobQueue.script
 			for each (var tr:TroopBean in troopRequirements) {
 				for each (type in types) {
 					var cond:ConditionBean = getConditionBeanForTroop(type);
-					if (cond == null) return;		// should not happen
 					if (!meetConditionBeanWithBarrackLevel(cond, bestLevel)) continue;
 					if (totalTroop[ troopIntNames[type] ] >= tr[troopIntNames[type] ] ) continue;
 					troopRequirement = tr;
