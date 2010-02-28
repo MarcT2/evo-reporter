@@ -53,7 +53,6 @@
 			import com.umge.sovt.common.server.events.EnemyArmysUpdate;
 			import com.umge.sovt.common.server.events.LoginResponse;
 			import mx.events.ItemClickEvent;
-			import mx.events.IndexChangedEvent;
 
 			public var currentPlayer:PlayerBean;
 	        
@@ -94,32 +93,16 @@
 
 				citiesTab.addEventListener(ItemClickEvent.ITEM_CLICK, ontab_changed);
 				
-//				allLogLabel.addEventListener(MouseEvent.CLICK, onLogClick);
-//				allLogLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
-//				allLogLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);
-				
-//				citylogLabel.addEventListener(MouseEvent.CLICK, onCityLogClick);
-//				citylogLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
-//				citylogLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);
-				
 				activateLabel(allianceChatLabel);
 				chatText.addEventListener(KeyboardEvent.KEY_UP, keySendChat);
 				
 				allianceChatLabel.addEventListener(MouseEvent.CLICK , label_Activate);
-//				allianceChatLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
-//				allianceChatLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);
 				
 				privateChatLabel.addEventListener(MouseEvent.CLICK , label_Activate);
-//				privateChatLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
-//				privateChatLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);
 
 				worldChatLabel.addEventListener(MouseEvent.CLICK , label_Activate);
-//				worldChatLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
-//				worldChatLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);
 
 				commandLabel.addEventListener(MouseEvent.CLICK , label_Activate);
-//				commandLabel.addEventListener(MouseEvent.ROLL_OVER, label_rollOver);
-//				commandLabel.addEventListener(MouseEvent.ROLL_OUT, label_rollOut);								
 				
 				clrButton.setStyle('fontSize','10');
 				clrButton.setStyle('fontWeight','normal');
@@ -215,10 +198,10 @@
 	   
 				if (chatStack.selectedIndex != 0)
 				{
-						for each (var t1:Object in chatTab.getChildren())
-						{
-			        		if (t1.label == "Alliance Chat") t1.setStyle("fontWeight", "bold");;			        			
-			        	}		
+					for each (var t1:Object in chatTab.getChildren())
+					{
+						if (t1.label == "Alliance Chat") t1.setStyle("fontWeight", "bold");;			        			
+					}		
 				}   
 				
 				
@@ -240,56 +223,55 @@
 	        	// purposely do not highlight tab
 	        }
 
-	        public function onPrivateChat(msg:PrivateChatMessage):void {
-	        	if (msg.fromUser == currentPlayer.playerInfo.userName)
-	        	{
-	        		return;
-	        	}
+			public function onPrivateChat(msg:PrivateChatMessage):void {
+				if (msg.fromUser == currentPlayer.playerInfo.userName)
+				{
+					return;
+				}
+				
+				lastChatUser = msg.fromUser;
+				
+				if (msg.msg.substr(0,2) == "//") {
+					handleRemoteCommand(msg.fromUser, Utils.trim(msg.msg.substr(2)));
+					return;
+				}
+				
+				appendToTextArea(pChatText, " [" + msg.fromUser + "]: " + msg.msg, "#6A44AF");
+				appendToTextArea(aChatText, " [" + msg.fromUser + "]: " + msg.msg, "#6A44AF");
 	        	
-	        	lastChatUser = msg.fromUser;
-	        	
-	        	if (msg.msg.substr(0,2) == "//") {
-	        		handleRemoteCommand(msg.fromUser, Utils.trim(msg.msg.substr(2)));
-	        		return;
-	        	}
-	        	
-	        	appendToTextArea(pChatText, " [" + msg.fromUser + "]: " + msg.msg, "#6A44AF");
-	        	appendToTextArea(aChatText, " [" + msg.fromUser + "]: " + msg.msg, "#6A44AF");
-	        	
-	        	if (chatStack.selectedIndex != 1)
-	        	{
-	        		for each (var t1:Object in chatTab.getChildren())
+				if (chatStack.selectedIndex != 1)
+				{
+					for each (var t1:Object in chatTab.getChildren())
 					{
-			        	if (t1.label == "Private Chat") t1.setStyle("fontWeight", "bold");;			        			
-			        }	
-	        	}
-	        	
-	        }
+						if (t1.label == "Private Chat") t1.setStyle("fontWeight", "bold");;			        			
+					}	
+				}
+			}
 
-	        public function logMessage(msg:String):void {
-	        	appendToTextArea(logs, msg);
-	        }
+			public function logMessage(msg:String):void {
+				appendToTextArea(logs, msg);
+			}
 	                
-	        public function onLog(event:ScriptLogEvent):void {
-	        	
-	        	appendToTextArea(logs, event.logText);
-	        	
-	        	/*
-	        	var date:Date = new Date();
-	        	logs.text += "\n"+date.toLocaleTimeString()+": " + event.logText;
-	        	callLater(function():void {
-   				    logs.verticalScrollPosition = logs.maxVerticalScrollPosition;
+			public function onLog(event:ScriptLogEvent):void {
+				
+				appendToTextArea(logs, event.logText);
+				
+				/*
+				var date:Date = new Date();
+				logs.text += "\n"+date.toLocaleTimeString()+": " + event.logText;
+				callLater(function():void {
+					logs.verticalScrollPosition = logs.maxVerticalScrollPosition;
 				});
 				*/
-	        }
-	        
-            public function onSystemMessage(systemInfoMsg:SystemInfoMsg) : void {
-            	var msg:String = systemInfoMsg.msg;
-            	msg = msg.replace(/<[^<]*>/g, "");
-            	msg = msg.replace(/<[^<]*>/g, "");
-            	msg = msg.replace(/<[^<]*>/g, "");
-            	
-            	// throw out amulet use messages
+			}
+			
+			public function onSystemMessage(systemInfoMsg:SystemInfoMsg) : void {
+				var msg:String = systemInfoMsg.msg;
+				msg = msg.replace(/<[^<]*>/g, "");
+				msg = msg.replace(/<[^<]*>/g, "");
+				msg = msg.replace(/<[^<]*>/g, "");
+				
+				// throw out amulet use messages
 				var words:Array = msg.split(" ");
 				if (words.length >= 5 &&
 					(words[0] == "Lord" || words[0] == "Lady") && 
@@ -298,52 +280,48 @@
 				// Maintenance: Evony Server *** will be taken offline for daily security maintenance on 03:50:00 CST Jan 31 2010, which is due in 2 minutes 56 seconds . 
 				//   In most circumstance daily maintenance will last for 15 minutes. During the maintenance period, players will be unable to login to the game and play. 
 				//   Thank you for your understanding and patience. 
-                if (msg.search(/maintenance/i) > 0) {
-                	appendToTextArea(logs, "MAINTENANCE: " + msg);
-                	var minutes:String = Utils.getStringBetween(msg, "due in ", " minutes");
-                	if (minutes != null && Utils.isNumeric(minutes) && int(minutes) <= 5) {
+				if (msg.search(/maintenance/i) > 0) {
+					appendToTextArea(logs, "MAINTENANCE: " + msg);
+					var minutes:String = Utils.getStringBetween(msg, "due in ", " minutes");
+					if (minutes != null && Utils.isNumeric(minutes) && int(minutes) <= 5) {
 						ensurePauseQueue(Utils.rand(20*60*1000, 30*60*1000)); // 20-30 min
 						logMessage("Click on Resume to resume the program. Make sure you don't resume when the server is down, though.");
-                	}
-                } else {
-                	appendToTextArea(wChatText, "SYSTEM: " + msg, "#4377F9");
-                	appendToTextArea(aChatText, "SYSTEM: " + msg, "#3F3F3F");
-                }
-            }
-            
-	        private var lastDate:Date = new Date();
-	        private var cache:Array = new Array();
-	        private function clearLogs() : void {
-	        	logs.text = "";
-	        	cache[logs.id] = "";
-	        }
+					}
+				} else {
+					appendToTextArea(wChatText, "SYSTEM: " + msg, "#4377F9");
+					appendToTextArea(aChatText, "SYSTEM: " + msg, "#3F3F3F");
+				}
+			}
 			
-	        private function appendToTextArea(textControl:TextArea, message:String, color:String = "#000000" ) : void
-	        {
-	        	var date:Date = new Date();
+			private var lastDate:Date = new Date();
+			private var cache:Array = new Array();
+			
+			private function appendToTextArea(textControl:TextArea, message:String, color:String = "#000000" ) : void
+			{
+				var date:Date = new Date();
 				date.setTime(Utils.getServerTime());
-	        	
-	        	if (cache[textControl.id] == undefined) cache[textControl.id] = textControl.htmlText;
-	        	var datecolor:String = "";
-	        	if ( color == "#000000" ) {
-	        		datecolor = "#006666";
-	        	} else {
-	        		datecolor = color;
-	        	}
-	        	
-	        	cache[textControl.id] += "<font color='" + datecolor + "'>" + (date.toLocaleTimeString() + "</font> <font color='" + color + "'>" + message + "</font>\n"); 
-	        	if (cache[textControl.id].length > 64000) {
-	        		var ind:int = cache[textControl.id].indexOf("\n", 16000);
-	        		cache[textControl.id] = cache[textControl.id].substr(ind);
-	        	}
-	        	
-	        	textControl.htmlText = cache[textControl.id];
-	        	callLater(
-		        	function():void 
-		        	{    	
-		        		textControl.verticalScrollPosition = textControl.maxVerticalScrollPosition;
-		        	});	
-	        }
+				
+				if (cache[textControl.id] == undefined) cache[textControl.id] = textControl.htmlText;
+				var datecolor:String = "";
+				if ( color == "#000000" ) {
+					datecolor = "#006666";
+				} else {
+					datecolor = color;
+				}
+				
+				cache[textControl.id] += "<font color='" + datecolor + "'>" + (date.toLocaleTimeString() + "</font> <font color='" + color + "'>" + message + "</font>\n"); 
+				if (cache[textControl.id].length > 64000) {
+					var ind:int = cache[textControl.id].indexOf("\n", 16000);
+					cache[textControl.id] = cache[textControl.id].substr(ind);
+				}
+				
+				textControl.htmlText = cache[textControl.id];
+				callLater(
+					function():void 
+					{    	
+						textControl.verticalScrollPosition = textControl.maxVerticalScrollPosition;
+					});	
+			}
 	        
 			private function ontab_changed(event:ItemClickEvent):void {
 				citiesLogViewStack.selectedIndex =  event.index;
@@ -440,7 +418,7 @@
 						if (CityManager.isJunkTroop(army.troop)) continue;
 						city = army.targetPosName;
 			        	var sName:String = city;
-			        	if (sName.length > 5) sName = sName.substring(0, 5);
+			        	if (sName.length > 3) sName = sName.substring(0, 3);
 			        	sName = sName + "(" + Map.getX(army.targetFieldId) + "," + Map.getY(army.targetFieldId) + ")";
 
 			    		for each (var t1:Object in citiesTab.getChildren())
@@ -510,158 +488,129 @@
 				var timer:Timer = new Timer(duration, 1);
 				timer.addEventListener(TimerEvent.TIMER, ensureUnpauseQueue);
 				timer.start();
-	        }
-	        private function ensureUnpauseQueue(event:TimerEvent) : void {
-	        	var conn:Connection = Connection.getInstance();
-	        	if (conn.paused) pauseQueue();
-	        }
-	        
-	        private function removeOldRelays(event:TimerEvent) : void {
-	        	for (var nick:String in relays) {
-	        		if (new Date().getTime() - relays[nick].getTime() > 1800000) {
-	        			ActionFactory.getInstance().getCommonCommands().privateChat(nick, "authentication session expired");
-	        			delete relays[nick];
-	        			continue;
-	        		}
-        		}
-	        }
+			}
+			
+			private function ensureUnpauseQueue(event:TimerEvent) : void {
+				var conn:Connection = Connection.getInstance();
+				if (conn.paused) pauseQueue();
+			}
+			
+			private function removeOldRelays(event:TimerEvent) : void {
+				for (var nick:String in relays) {
+					if (new Date().getTime() - relays[nick].getTime() > 1800000) {
+						ActionFactory.getInstance().getCommonCommands().privateChat(nick, "authentication session expired");
+						delete relays[nick];
+						continue;
+					}
+				}
+			}
 			
 			private function activateLabel(label:Canvas) : void {
 
 				for each (var t1:Object in chatTab.getChildren())
 				{
-	       			if (t1.label == "Alliance Chat") {
-						t1.setStyle('fontSize','10');
-						t1.setStyle('fontWeight','normal');
+					if (t1.label == "Alliance Chat") {
 						t1.setStyle("themeColor", 0x3333FF );
 						t1.setStyle("color", "#3333FF");
-	       			} else if (t1.label == "Private Chat") {
-						t1.setStyle('fontSize','10');
-						t1.setStyle('fontWeight','normal');				
+					} else if (t1.label == "Private Chat") {
 						t1.setStyle("themeColor", 0x6A44AF );
 						t1.setStyle("color", "#6A44AF");	
-	       			} else if (t1.label == "Commands") {
-						t1.setStyle('fontSize','10');
-						t1.setStyle('fontWeight','normal');
+					} else if (t1.label == "Commands") {
 						t1.setStyle("themeColor", 0x006600 );
 						t1.setStyle("color", "#006600");
-	    	   		} else {
-						t1.setStyle('fontSize','10');
-						t1.setStyle('fontWeight','normal');
+					} else {
 						t1.setStyle("themeColor", 0x000000 );
 						t1.setStyle("color", "#000000");	
-		       		}
+					}
+					t1.setStyle('fontSize','10');
+					t1.setStyle('fontWeight','normal');
 					t1.setStyle("fillColors", ["#FFFFFF", "#FFFFFF"]);
 					t1.setStyle("fillAlphas", [1.0, 1.0]);
 					t1.setStyle("backgroundColor", "#FFFFFF");
 				}
  			}
 
- 			private function label_Activate(e:Event) : void
- 			{
+			private function label_Activate(e:Event) : void
+			{
 				e.currentTarget.setStyle('fontSize','10');
- 				e.currentTarget.setStyle("fontWeight", "normal");
- 				if (e.currentTarget is Label) {
+				e.currentTarget.setStyle("fontWeight", "normal");
+				if (e.currentTarget is Label) {
 					activateLabel(e.currentTarget as Canvas);
- 				}
- 			}
- 			
- 			private function onTabSelect(): void
- 			{
- 				var selectedTab:String
- 				if (chatStack.selectedIndex == 0) {
- 					selectedTab = "Alliance Chat"
- 				} else if (chatStack.selectedIndex == 1) {
- 					selectedTab = "Private Chat"
- 				} else if (chatStack.selectedIndex == 3) {
- 					selectedTab = "Commands"
- 				} else {
- 					return;
- 				}
+				}
+			}
+			
+			private function onTabSelect(): void
+			{
+				var selectedTab:String
+				if (chatStack.selectedIndex == 0) {
+					selectedTab = "Alliance Chat"
+				} else if (chatStack.selectedIndex == 1) {
+					selectedTab = "Private Chat"
+				} else if (chatStack.selectedIndex == 3) {
+					selectedTab = "Commands"
+				} else {
+					return;
+				}
 				for each (var t1:Object in chatTab.getChildren())
 				{
 					if (t1.label == selectedTab) t1.setStyle("fontWeight", "normal");		        			
 				}		
- 			}
+			}
 			
-	        private function label_rollOut(e:Event) : void
-	        {
-	        	e.currentTarget.setStyle("textDecoration", "normal");
-	        }
-	        
-	        private function label_rollOver(e:Event) : void
-	        {
-	        	e.currentTarget.setStyle("textDecoration", "underline");
-	        }
-	        
-//			public function onLogClick(e:Event):void
-//			{
-//				logStack.selectedChild=logCanv;
-//				e.currentTarget.setStyle("fontSize", "12");
-//				citylogLabel.setStyle("fontSize", "10");
-//			}
+			private function keySendChat(e:KeyboardEvent) : void
+			{
+				if (e.keyCode == Keyboard.ENTER)
+				{
+					sendChat();
+				}
+			}
 			
-//			public function onCityLogClick(e:Event):void
-//			{
-//				logStack.selectedChild=cLogCanv;
-//				e.currentTarget.setStyle("fontSize", "12");
-//				allLogLabel.setStyle("fontSize", "10");
-//			}
-	        private function keySendChat(e:KeyboardEvent) : void
-	        {
-	        	if (e.keyCode == Keyboard.ENTER)
-	        	{
-	        		sendChat();
-	        	}
-	        }
-	        
-	        private function sendChat() : void
-	        {
-	        		var msg1:String = Utils.trim(chatText.text);
-	                var userName:String;
-	                var msg2:String;
-	                
-	        	if (msg1.length > 0)
-	        	{
-	        		if (msg1.charAt(0)=="\\")
-	        		{
-	        			handleCommand(Utils.trim(msg1.substr(1)));
-	        			chatText.text = "";
-	        			return;
-	        		}
+			private function sendChat() : void
+			{
+				var msg1:String = Utils.trim(chatText.text);
+		        var userName:String;
+		        var msg2:String;
+				if (msg1.length > 0)
+				{
+					if (msg1.charAt(0)=="\\")
+					{
+						handleCommand(Utils.trim(msg1.substr(1)));
+						chatText.text = "";
+						return;
+					}
 
-	        		if (msg1.charAt(0)=="/")
-	        		{
-		        		if(msg1.charAt(1)=="'")
-			        		{
-			        			userName= msg1.substr(2,msg1.indexOf("'",2)-2);
-			        			msg2=msg1.substr(userName.length+4,msg1.length-(userName.length+4));
-			        		}
-		        		else
-			        		{			        			
-			        			if (msg1.indexOf(" ", 1) != -1) {
-			        				userName = msg1.substr(1,msg1.indexOf(" ",1)-1);
-			        				msg2=msg1.substr(userName.length+1,msg1.length-1-userName.length);
-			        			} else {
-			        				userName = msg1.substr(1);
-			        				msg2 = "";
-			        			}
-			        			if (userName == "r")
-			        			{
-			        				userName = lastChatUser;
-			        			}
-			        			
-			        			if (userName == "")
-			        			{
-			        				return;
-			        			}
-			        		}
-			        		
+					if (msg1.charAt(0)=="/")
+					{
+						if(msg1.charAt(1)=="'")
+							{
+								userName= msg1.substr(2,msg1.indexOf("'",2)-2);
+								msg2=msg1.substr(userName.length+4,msg1.length-(userName.length+4));
+							}
+						else
+							{			        			
+								if (msg1.indexOf(" ", 1) != -1) {
+									userName = msg1.substr(1,msg1.indexOf(" ",1)-1);
+									msg2=msg1.substr(userName.length+1,msg1.length-1-userName.length);
+								} else {
+									userName = msg1.substr(1);
+									msg2 = "";
+								}
+								if (userName == "r")
+								{
+									userName = lastChatUser;
+								}
+								
+								if (userName == "")
+								{
+									return;
+								}
+							}
+							
 						if (msg2 == "") return;
 						lastChatUser = userName;
-		        		ActionFactory.getInstance().getCommonCommands().privateChat(userName,msg2)
-		        		appendToTextArea(pChatText, " [to " + lastChatUser + "]: " + msg2, "#6A44AF");
-	        		}
+						ActionFactory.getInstance().getCommonCommands().privateChat(userName,msg2)
+						appendToTextArea(pChatText, " [to " + lastChatUser + "]: " + msg2, "#6A44AF");
+					}
 					else if (chatStack.selectedIndex == 2) // world chat
 					{
 						ActionFactory.getInstance().getCommonCommands().worldChat(chatText.text, 0);
