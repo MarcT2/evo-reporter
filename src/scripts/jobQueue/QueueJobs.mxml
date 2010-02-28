@@ -93,16 +93,7 @@
 
 				citiesTab.addEventListener(ItemClickEvent.ITEM_CLICK, ontab_changed);
 				
-				activateLabel(allianceChatLabel);
 				chatText.addEventListener(KeyboardEvent.KEY_UP, keySendChat);
-				
-				allianceChatLabel.addEventListener(MouseEvent.CLICK , label_Activate);
-				
-				privateChatLabel.addEventListener(MouseEvent.CLICK , label_Activate);
-
-				worldChatLabel.addEventListener(MouseEvent.CLICK , label_Activate);
-
-				commandLabel.addEventListener(MouseEvent.CLICK , label_Activate);
 				
 				clrButton.setStyle('fontSize','10');
 				clrButton.setStyle('fontWeight','normal');
@@ -506,40 +497,6 @@
 						delete relays[nick];
 						continue;
 					}
-				}
-			}
-			
-			private function activateLabel(label:Canvas) : void {
-
-				for each (var t1:Object in chatTab.getChildren())
-				{
-					if (t1.label == "Alliance Chat") {
-						t1.setStyle("themeColor", 0x3333FF );
-						t1.setStyle("color", "#3333FF");
-					} else if (t1.label == "Private Chat") {
-						t1.setStyle("themeColor", 0x6A44AF );
-						t1.setStyle("color", "#6A44AF");	
-					} else if (t1.label == "Commands") {
-						t1.setStyle("themeColor", 0x006600 );
-						t1.setStyle("color", "#006600");
-					} else {
-						t1.setStyle("themeColor", 0x000000 );
-						t1.setStyle("color", "#000000");	
-					}
-					t1.setStyle('fontSize','10');
-					t1.setStyle('fontWeight','normal');
-					t1.setStyle("fillColors", ["#FFFFFF", "#FFFFFF"]);
-					t1.setStyle("fillAlphas", [1.0, 1.0]);
-					t1.setStyle("backgroundColor", "#FFFFFF");
-				}
- 			}
-
-			private function label_Activate(e:Event) : void
-			{
-				e.currentTarget.setStyle('fontSize','10');
-				e.currentTarget.setStyle("fontWeight", "normal");
-				if (e.currentTarget is Label) {
-					activateLabel(e.currentTarget as Canvas);
 				}
 			}
 			
@@ -1051,14 +1008,27 @@
 				return -1;
 			}
 
-			private function tabBar_creationComplete():void {
+			private function tabBar_creationComplete(tabObject:Object):void {
 				
-				for each (var t1:Object in logTab.getChildren())
+				for each (var t1:Object in tabObject.getChildren())
 				{
-	       			t1.setStyle('fontSize','10');
-					t1.setStyle('fontWeight','normal');
 					t1.setStyle("themeColor", 0x000000 );
 					t1.setStyle("color", "#000000");	
+					if (t1.label == "Alliance Chat") {
+						t1.setStyle("themeColor", 0x3333FF );
+						t1.setStyle("color", "#3333FF");
+					} else if (t1.label == "Private Chat") {
+						t1.setStyle("themeColor", 0x6A44AF );
+						t1.setStyle("color", "#6A44AF");	
+					} else if (t1.label == "Commands") {
+						t1.setStyle("themeColor", 0x006600 );
+						t1.setStyle("color", "#006600");
+					} else {
+						t1.setStyle("themeColor", 0x000000 );
+						t1.setStyle("color", "#000000");	
+					}
+	       			t1.setStyle('fontSize','10');
+					t1.setStyle('fontWeight','normal');
 					t1.setStyle("fillColors", ["#FFFFFF", "#FFFFFF"]);
 					t1.setStyle("fillAlphas", [1.0, 1.0]);
 					t1.setStyle("backgroundColor", "#FFFFFF");
@@ -1087,7 +1057,7 @@
 		<mx:HDividedBox width="100%" id="logChatBox" horizontalGap="5" height="50%" borderStyle="solid" borderThickness="0" verticalAlign="bottom">
 			<mx:VBox width="50%" height="100%" verticalGap="0" borderStyle="none" id="vlogs">
 				<mx:HBox width="100%" height="20" verticalAlign="bottom">
-					<mx:TabBar id="logTab" dataProvider="logStack" creationComplete="tabBar_creationComplete()" height="20"/>
+					<mx:TabBar id="logTab" dataProvider="logStack" creationComplete="tabBar_creationComplete(logTab)" height="20"/>
 					<mx:HBox width="90%" height="100%"/>
 					<mx:Button label="Clear" height="20" click="clearLogs()" id="clrButton" styleName="gradientRectangleSkin"/>
 				</mx:HBox>
@@ -1104,7 +1074,7 @@
 				<mx:VDividedBox height="100%" width="100%" verticalGap="0">
 					<mx:VBox height="100%" width="100%" verticalGap="0" borderThickness="0">
 						<mx:HBox width="100%" height="20" verticalAlign="bottom">
-							<mx:TabBar id="chatTab" dataProvider="chatStack" height="20" itemClick="onTabSelect()"/>
+							<mx:TabBar id="chatTab" dataProvider="chatStack" height="20" creationComplete="tabBar_creationComplete(chatTab)" itemClick="onTabSelect()"/>
 						</mx:HBox>
 						<mx:ViewStack id="chatStack" width="100%" height="100%" creationPolicy="all">
 							<mx:Canvas id="allianceChatLabel" width="100%" height="100%" label="Alliance Chat">
