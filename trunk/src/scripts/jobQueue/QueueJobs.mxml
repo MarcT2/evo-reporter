@@ -295,6 +295,10 @@
 			
 			private var lastDate:Date = new Date();
 			private var cache:Array = new Array();
+			private function clearLogs() : void {
+				logs.text = "";
+				cache[logs.id] = "";
+			} 
 			
 			private function appendToTextArea(textControl:TextArea, message:String, color:String = "#000000" ) : void
 			{
